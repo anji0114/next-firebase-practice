@@ -1,32 +1,49 @@
-import { addDoc, collection, doc, namedQuery, serverTimestamp, setDoc } from "firebase/firestore";
-import { useState } from "react";
+import { doc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { db } from "src/utils/firebase";
 
-export const Input = () => {
+const UsersEdit = () => {
+  const router = useRouter();
+  const [user, setUser] = useState();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [admin, setAdmin] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const updateData = async (e) => {
     e.preventDefault();
-
-    if (!name || !email) return;
-    const userDocumentRef = doc(collection(db, "users"));
-    await setDoc(userDocumentRef, {
+    const userDocumentRef = doc(db, "users", router.query.id);
+    await updateDoc(userDocumentRef, {
       name: name,
       email: email,
       admin: admin,
-      timestamp: serverTimestamp(),
-    });yar
-    setName("");
-    setEmail("");
-    setAdmin(false);
+      updateTime: serverTimestamp(),
+    });
+
+    router.push(`/${router.query.id}`);
   };
 
+  useEffect(() => {
+    if (!router.isReady) return;
+    const userDocumentRef = doc(db, "users", router.query.id);
+    getDoc(userDocumentRef).then((documentSnapshot) => {
+      setUser(documentSnapshot.data());
+    });
+  }, [router.query.id]);
+
+  useEffect(() => {
+    if (!user) return;
+    setName(user.name);
+    setEmail(user.email);
+    setAdmin(user.admin);
+  }, [user]);
+
   return (
-    <div className="max-w-xl">
+    <div>
+      <h2 className="text-xl text-blue-500 font-bold">ユーザー編集</h2>
+
       <div className="mt-4">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={updateData}>
           <div>
             <p className="text-lg">名前</p>
             <input
@@ -43,6 +60,7 @@ export const Input = () => {
           <div className="mt-2">
             <p className="">メールアドレス</p>
             <input
+              name="email"
               type="email"
               placeholder="メールアドレス"
               value={email}
@@ -57,18 +75,20 @@ export const Input = () => {
             <input
               name="admin"
               type="checkbox"
-              checked={admin}
               onChange={() => {
                 setAdmin((admin) => !admin);
               }}
+              checked={admin}
               className="bg-gray-100 w-6 h-6"
             />
           </div>
-          <div className="mt-2">
-            <button className="bg-blue-400 rounded-sm text-white px-6 py-1">登録</button>
+          <div className="mt-4">
+            <button className="bg-blue-400 rounded-sm text-white px-6 py-1">更新</button>
           </div>
         </form>
       </div>
     </div>
   );
 };
+
+export default UsersEdit;

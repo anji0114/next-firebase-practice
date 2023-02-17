@@ -5,7 +5,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <div className="">
       <Header />
-      <div className="max-w-5xl p-6 mx-auto">
+      <div className="max-w-4xl px-6 py-12 mx-auto">
         <Component {...pageProps} />
       </div>
     </div>

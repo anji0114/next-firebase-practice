@@ -1,66 +1,27 @@
-import { async } from "@firebase/util";
-import { deleteDoc, doc, getDoc } from "firebase/firestore";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { db } from "src/utils/firebase";
-
-const UsersId = () => {
-  const [user, setUser] = useState();
-  const router = useRouter();
-
-  // ユーザーの取得
-  useEffect(() => {
-    if (!router.isReady) return;
-    const userDocumentRef = doc(db, "users", router.query.id);
-    getDoc(userDocumentRef).then((documentSnapshot) => {
-      setUser(documentSnapshot.data());
-    });
-  }, [router.query.id]);
-
-  const deleteUser = async () => {
-    const userDocumentRef = doc(db, "users", router.query.id);
-    await deleteDoc(userDocumentRef);
-    router.push("/");
-  };
-
+const TodoId = () => {
   return (
     <div>
-      <h2 className="text-xl text-blue-500 font-bold">記事詳細</h2>
-      <div className="space-y-4 mt-4">
-        <dl className="flex align-center gap-4">
-          <dt>名前</dt>
-          <dd>{user?.name}</dd>
-        </dl>
-        <dl className="flex align-center gap-4">
-          <dt>email</dt>
-          <dd>{user?.email}</dd>
-        </dl>
-        <dl className="flex align-center gap-4">
-          <dt>管理者</dt>
-          {user?.admin ? (
-            <dd className="text-green-600">管理</dd>
-          ) : (
-            <dd className="text-blue-600">投稿者</dd>
-          )}
-        </dl>
-      </div>
-      <div className="mt-4 flex gap-4">
-        <button
-          className="bg-red-500 px-6 py-1 text-white rounded-sm font-bold"
-          onClick={deleteUser}
-        >
-          削除
-        </button>
-        <Link
-          href={`${router.query.id}/edit`}
-          className="bg-green-600 px-6 py-1 text-white rounded-sm font-bold"
-        >
-          編集
-        </Link>
+      <h2 className="text-2xl font-bold text-slate-600">タスクを編集する</h2>
+      <div className="mt-4 space-y-5">
+        <div>
+          <input
+            type="text"
+            className="border border-gray-300 bg-gray-50 w-3/4 p-2"
+            placeholder="タスクを入力する"
+          />
+        </div>
+        <div className="px-2">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" className="w-4 h-4" />
+            <span className="text-lg text-blue-700">タスクの完了</span>
+          </label>
+        </div>
+        <div>
+          <button className="w-1/4 border bg-blue-400 text-white p-2 text-center">更新する</button>
+        </div>
       </div>
     </div>
   );
 };
 
-export default UsersId;
+export default TodoId;

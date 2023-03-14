@@ -1,9 +1,13 @@
 import { collection, doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { selectUser } from "src/state/user";
 import { db } from "src/utils/firebase";
 
-export const PostTodo = () => {
+export const InputTodo = () => {
   const [todo, setTodo] = useState("");
+  const user = useSelector(selectUser);
+
   const addTodo = async (e) => {
     e.preventDefault();
     if (!todo) return;
@@ -12,6 +16,7 @@ export const PostTodo = () => {
     await setDoc(todoDocumentRef, {
       todo: todo,
       isDone: false,
+      userId: user.uid,
       updateTime: serverTimestamp(),
     });
 

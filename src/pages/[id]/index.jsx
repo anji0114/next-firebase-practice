@@ -1,12 +1,18 @@
+import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { db } from "src/utils/firebase";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser } from "src/state/user";
+import { auth, db } from "src/utils/firebase";
 
 const TodoId = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
   const [todo, setTodo] = useState("");
   const [isDone, setIsDone] = useState(false);
+  const [userId, setUserId] = useState("");
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -14,6 +20,7 @@ const TodoId = () => {
     getDoc(todoDocumentRef).then((documentSnapshot) => {
       setTodo(documentSnapshot.data().todo);
       setIsDone(documentSnapshot.data().isDone);
+      setUserId(documentSnapshot.data().userId);
     });
   }, [router]);
 

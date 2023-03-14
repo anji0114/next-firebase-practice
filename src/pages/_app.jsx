@@ -1,14 +1,16 @@
 import { Header } from "@/components/Header";
-import "../styles/globals.css";
+import { Provider } from "react-redux";
+import { store } from "src/state";
+import "src/styles/globals.css";
 
 function MyApp({ Component, pageProps }) {
   return (
-    <div className="">
+    <Provider store={store}>
       <Header />
       <div className="max-w-4xl px-6 py-12 mx-auto">
         <Component {...pageProps} />
       </div>
-    </div>
+    </Provider>
   );
 }
 

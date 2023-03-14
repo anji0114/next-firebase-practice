@@ -42,7 +42,7 @@ export const TodoList = ({ todos, color }) => {
               </div>
               <div className="flex items-center gap-2">
                 <Link href={`${todo.id}`} className="bg-green-600 text-white py-1 px-3 text-sm">
-                  編集する
+                  詳細を見る
                 </Link>
                 <button
                   className="bg-red-500 text-white py-1 px-3 text-sm"

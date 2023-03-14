@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const userSlice = createSlice({
   name: "user",
   initialState: {
-    user: { uid: "", photoUrl: "", displayName: "" },
+    user: { uid: "", photoUrl: "", displayName: "", loaded: false },
   },
 
   reducers: {
@@ -11,7 +11,7 @@ const userSlice = createSlice({
       state.user = action.payload;
     },
     logout: (state) => {
-      state.user = { uid: "", photoUrl: "", displayName: "" };
+      state.user = { uid: "", photoUrl: "", displayName: "", loaded: true };
     },
   },
 });

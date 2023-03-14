@@ -1,28 +1,27 @@
-import { onAuthStateChanged } from "firebase/auth";
+import { Auth } from "@/components/Auth";
 import { doc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { selectUser } from "src/state/user";
-import { auth, db } from "src/utils/firebase";
+import { db } from "src/utils/firebase";
 
 const TodoId = () => {
   const router = useRouter();
-  const dispatch = useDispatch();
-  const user = useSelector(selectUser);
   const [todo, setTodo] = useState("");
-  const [isDone, setIsDone] = useState(false);
   const [userId, setUserId] = useState("");
+  const [isDone, setIsDone] = useState(false);
+  const user = useSelector(selectUser);
 
   useEffect(() => {
-    if (!router.isReady) return;
     const todoDocumentRef = doc(db, "todos", router.query.id);
     getDoc(todoDocumentRef).then((documentSnapshot) => {
       setTodo(documentSnapshot.data().todo);
       setIsDone(documentSnapshot.data().isDone);
       setUserId(documentSnapshot.data().userId);
     });
-  }, [router]);
+  }, []);
 
   const todoUpdate = async (e) => {
     e.preventDefault();
@@ -38,8 +37,8 @@ const TodoId = () => {
 
   return (
     <>
-      {router.isReady ? (
-        <div>
+      {user.uid == userId ? (
+        <>
           <h2 className="text-2xl font-bold text-slate-600">タスクを編集する</h2>
           <div className="mt-4 space-y-5">
             <div>
@@ -79,9 +78,14 @@ const TodoId = () => {
               </button>
             </div>
           </div>
-        </div>
+        </>
       ) : (
-        <p className="text-blue-600">ローディング中</p>
+        <p className="text-center">
+          アクセスできません
+          <Link href={"/"} className="text-blue-400">
+            トップに戻る
+          </Link>
+        </p>
       )}
     </>
   );
